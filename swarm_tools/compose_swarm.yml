@@ -1,0 +1,63 @@
+services:
+  clients:
+    image:  johanneslieb/clients:latest
+    stdin_open: true
+    tty: true
+    entrypoint: ["/bin/bash", "-c", "sleep 10s && . start.sh 50"]
+    deploy:
+      mode: replicated
+      replicas: 4
+      placement:
+          constraints:
+            - node.hostname != user-virtual-machine
+
+  server:
+    image:  johanneslieb/server:latest
+    stdin_open: true
+    tty: true
+    ports:
+      - "8888:8888"
+    entrypoint: ["bash", "wait-for-it.sh", "-s", "-t", "60", "pgbouncer:5432", "--", "/bin/bash", "entrypoint.sh"]
+    deploy:
+      placement:
+          constraints:
+            - node.hostname == ITS-Docker-Swarm-efi-Worker-535-02-vGPU-a100-20c
+    depends_on:
+      - pgbouncer
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=secsum
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'postgres']
+    deploy:
+      placement:
+          constraints:
+            - node.hostname != user-virtual-machine
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=secsum
+      - AUTH_TYPE=plain
+      - POOL_MODE=transaction
+      - MAX_CLIENT_CONN=1000
+      - DEFULT_POOL_SIZE=50
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-h', 'localhost']
+    deploy:
+      placement:
+          constraints:
+            - node.hostname != user-virtual-machine
+    depends_on:
+      - db
+

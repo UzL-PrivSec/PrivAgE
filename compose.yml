@@ -1,0 +1,46 @@
+services:
+  clients:
+    image: clients
+    build: ./client/simulation/
+    stdin_open: true
+    tty: true       
+
+  server:
+    image: server
+    build: ./server/
+    stdin_open: true
+    tty: true
+    ports:
+      - "8888:8888" 
+    depends_on:
+      - pgbouncer
+
+  db:
+    container_name: db
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=secsum
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'postgres']
+
+  pgbouncer:
+    container_name: pgbouncer
+    image: edoburu/pgbouncer:latest
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=secsum
+      - AUTH_TYPE=plain
+      - POOL_MODE=transaction
+      - MAX_CLIENT_CONN=1000
+      - DEFULT_POOL_SIZE=50
+    ports:
+      - "5432:5432"
+    depends_on:
+      - db
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-h', 'localhost']

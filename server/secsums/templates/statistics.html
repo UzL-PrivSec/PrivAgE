@@ -1,0 +1,260 @@
+<!DOCTYPE
+	html>
+<html>
+
+<head>
+	<title>
+		Secure
+		Summation
+		Statistics
+	</title>
+	<meta
+		charset="UTF-8">
+	<style>
+		table {
+			border-collapse: collapse;
+			border-spacing: 0;
+			width: 100%;
+			border: 1px solid #000000;
+			padding: 1px;
+		}
+
+		th {
+			text-align: left;
+		}
+
+		td {
+			width: 15%;
+			text-align: left;
+			padding: 3px;
+		}
+
+		td:last-child {
+			width: 70%;
+			padding: 3px;
+		}
+
+		.bar {
+			width: 0%;
+			height: 20px;
+			margin-right: 10px;
+			background-color: #04AA6D;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Secure
+		Summation
+		Statistics
+	</h1>
+	<p>Here
+		you
+		can
+		find
+		an
+		overwiew
+		of
+		the
+		activities
+		which
+		take
+		place
+		during
+		your
+		current
+		protocol
+		run.
+	</p>
+	<h2>Protocol
+		Progress
+	</h2>
+	<table>
+		<!-- Progress bars will be dynamically loaded in this area. -->
+		<tr>
+			<th>Protocol
+				step
+			</th>
+			<th>Number
+				of
+				successful
+				clients
+			</th>
+			<th>
+			</th>
+		</tr>
+		<tr>
+			<td><strong>Initial</strong>
+			</td>
+			<td>
+				<div
+					id="clients_step0">
+					0
+				</div>
+			</td>
+			<td>
+				<div class="bar"
+					id="progress_step0">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>1</strong>
+			</td>
+			<td>
+				<div
+					id="clients_step1">
+					0
+				</div>
+			</td>
+			<td>
+				<div class="bar"
+					id="progress_step1">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>2</strong>
+			</td>
+			<td>
+				<div
+					id="clients_step2">
+					0
+				</div>
+			</td>
+			<td>
+				<div class="bar"
+					id="progress_step2">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>3</strong>
+			</td>
+			<td>
+				<div
+					id="clients_step3">
+					0
+				</div>
+			</td>
+			<td>
+				<div class="bar"
+					id="progress_step3">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>4</strong>
+			</td>
+			<td>
+				<div
+					id="clients_step4">
+					0
+				</div>
+			</td>
+			<td>
+				<div class="bar"
+					id="progress_step4">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>5</strong>
+			</td>
+			<td>
+				<div
+					id="clients_step5">
+					0
+				</div>
+			</td>
+			<td>
+				<div class="bar"
+					id="progress_step5">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>6</strong>
+			</td>
+			<td>
+				<div
+					id="clients_step6">
+					0
+				</div>
+			</td>
+			<td>
+				<div class="bar"
+					id="progress_step6">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>7</strong>
+			</td>
+			<td>
+				<div
+					id="clients_step7">
+					0
+				</div>
+			</td>
+			<td>
+				<div class="bar"
+					id="progress_step7">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>8</strong>
+			</td>
+			<td>
+				<div
+					id="clients_step8">
+					0
+				</div>
+			</td>
+			<td>
+				<div class="bar"
+					id="progress_step8">
+				</div>
+			</td>
+		</tr>
+	</table>
+	<h2>Result
+		of
+		Protocol
+		Run
+	</h2>
+	<div
+		id="protocol_result">
+	</div>
+	<script
+		type="text/javascript">
+			function refreshStats() {
+				fetch("/secsum/{{name}}/stats_refresh", {
+					method: "GET"
+				}).then(response => response.json())
+					.then(data => {
+						stats = data["stats"];
+						result = data["result"];
+						for (let i = 0; i < 9; i++) {
+							let statId = "clients_step" + i;
+							if (i != 0) {
+								let progressId = "progress_step" + i;
+								let percentage = (stats[i] / stats[0]) * 100;
+								let bar = document.getElementById(progressId);
+								bar.style.width = percentage + "%";
+							}
+							document.getElementById(statId).textContent = stats[i];
+						}
+						if (result && result.length) {
+							document.getElementById("protocol_result").textContent = result;
+						} else {
+							setTimeout(refreshStats, 150);
+						}
+					});
+			}
+			setTimeout(refreshStats, 150);
+		</script>
+</body>
+
+</html>

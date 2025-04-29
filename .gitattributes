@@ -1,0 +1,5 @@
+
+# All bash scripts should use Unix-like line endings.
+*.bat             text eol=lf
+*.sh              text eol=lf
+
