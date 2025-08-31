@@ -50,4 +50,5 @@ The command is essentially the same for both with minimal changes for more reada
 **IMPORTANT NOTE:** The building process might take a while and can on some systems include some warnings, which might be displayed in red. Do not worry those do not mean that anything is broken. The software should still work as intended as long as the build process does complete all specified steps.
 
 ### Step 4: Deployment of the containers.
-To be done.
+You can use docker swarm for the deployment of the containers. 
+More information on how to set this up can be found in dockers official documentation: https://docs.docker.com/engine/swarm/swarm-tutorial/ 
